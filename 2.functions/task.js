@@ -61,7 +61,17 @@ function averageEvenElementsWorker(...arr) {
 }
 
 function makeWork(arrOfArr, func) {
+  let maxWorkerResult = -Infinity;
 
+  for (elemArr of arrOfArr) {
+    const result = func(...elemArr);
+
+    if (result > maxWorkerResult) {
+      maxWorkerResult = result;
+    }
+  }
+
+  return maxWorkerResult;
 }
 
 // -------------------- tests to 1 task --------------------
@@ -107,3 +117,12 @@ console.assert(differenceEvenOddWorker(15, 97, 85, 64, 67, 10, 69, 40, 15, 35) =
 
 console.assert(averageEvenElementsWorker(1, 2, 3, 4, 5, 6, 7, 8, 9) === 5);
 console.assert(averageEvenElementsWorker(15, 97, 85, 64, 67, 10, 69, 40, 15, 35) === 38);
+
+// -------------------- tests to 3 task --------------------
+
+const arr = [[10, 10, 11, 20, 10], [67, 10, 2, 39, 88], [72, 75, 51, 87, 43], [30, 41, 55, 96, 62]];
+
+console.assert(makeWork(arr, summElementsWorker) === 328);
+console.assert(makeWork(arr, differenceMaxMinWorker) === 86);
+console.assert(makeWork(arr, differenceEvenOddWorker) === 92);
+console.assert(makeWork(arr, averageEvenElementsWorker) === 72);
