@@ -108,3 +108,80 @@ let handsBook = library.giveBookByName('Король Ардена');
 handsBook.state -= 50;
 handsBook.fix();
 library.addBook(handsBook);
+
+// -------------------- 3 task --------------------
+class Student {
+  constructor(name, gender, age) {
+    this.name = name;
+    this.gender = gender;
+    this.age = age;
+    this.marks = {};
+  }
+
+  addMark(mark, subjectName) {
+    if (mark < 2 || mark > 5) {
+      return;
+    }
+
+    if (this.subjectsName.length) {
+      this.subject = subjectName;
+
+      if (this.subject) {
+        this.marks[subjectName].push(mark);
+        return;
+      }
+    }
+    
+    this.marks[subjectName] = [mark];
+  }
+
+  getAverageBySubject(subjectName) {
+    this.subject = subjectName;
+
+    if (this.subject) {
+      this.sumMarks = this.marks[subjectName]
+      return this.sumMarks / this.marks[subjectName].length;
+    }
+
+    return 0;
+  }
+
+  getAverage() {
+    if (this.subjectsName.length) {
+      return this.subjectsName.reduce(
+        (accum, currentSubject) => accum + this.getAverageBySubject(currentSubject), 0
+      ) / this.subjectsName.length;
+    }
+
+    return 0;
+  }
+
+  get subjectsName() {
+    return Object.keys(this.marks);
+  }
+
+  set subject(subjectName) {
+    this._subject = this.subjectsName.find((subject) => subject === subjectName);
+  }
+
+  get subject() {
+    return this._subject;
+  }
+
+  set sumMarks(marks) {
+    this._sumMarks = marks.reduce((accum, currentMark) => accum + currentMark);
+  }
+
+  get sumMarks() {
+    return this._sumMarks;
+  }
+}
+
+const student = new Student("Олег Никифоров");
+student.addMark(5, "химия");
+student.addMark(5, "физика");
+student.addMark(4, "физика");
+student.addMark(6, "физика"); // Оценка не добавится, так как больше 5
+student.getAverageBySubject("физика"); // Средний балл по предмету физика 4.5
+student.getAverageBySubject("биология"); // Вернёт 0, так как по такому предмету нет никаких оценок.
+student.getAverage(); // Средний балл по всем предметам 4.75
