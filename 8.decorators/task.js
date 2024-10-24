@@ -3,11 +3,11 @@ function cachingDecoratorNew(func) {
   const cache = [];
 
   return function (...args) {
+    if (cache.length === 5) cache.shift();
+  
     const hash = md5(args);
 
     const findIndex = cache.findIndex(el => el.hash === hash);
-
-    if (cache.length === 5) cache.shift();
 
     if (findIndex !== -1) {
       return `Из кеша: ${cache[findIndex].value}`;
@@ -23,18 +23,26 @@ function cachingDecoratorNew(func) {
 
 //Задача № 2
 function debounceDecoratorNew(func, delay) {
-  
+  let timeout;
+
+  function wrapper (...args) {
+    clearTimeout(timeout);
+
+    if (!timeout) {
+      func.apply(this, args);
+      wrapper.count += 1;
+    }
+
+    wrapper.allCount++;
+
+    timeout = setTimeout(() => {
+      func.apply(this, args);
+      wrapper.count++;
+    }, delay);
+
+  };
+
+  wrapper.count = 0;
+  wrapper.allCount = 0;
+  return wrapper;
 }
-
-const addAndMultiply = (a, b, c) => (a + b) * c;
-
-const upgraded = cachingDecoratorNew(addAndMultiply);
-
-console.log(upgraded(1, 2, 3)); // вычисляем: 9
-console.log(upgraded(1, 2, 3)); // из кеша: 9
-console.log(upgraded(2, 2, 3)); // вычисляем: 12
-console.log(upgraded(3, 2, 3)); // вычисляем: 15
-console.log(upgraded(4, 2, 3)); // вычисляем: 18
-console.log(upgraded(5, 2, 3)); // вычисляем: 21
-console.log(upgraded(6, 2, 3)); // вычисляем: 24 (при этом кеш для 1, 2, 3 уничтожается)
-console.log(upgraded(1, 2, 3)); // вычисляем: 9  (снова вычисляем, кеша нет)
